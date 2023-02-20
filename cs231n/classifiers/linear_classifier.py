@@ -11,6 +11,7 @@ from past.builtins import xrange
 class LinearClassifier(object):
     def __init__(self):
         self.W = None
+        self.V=0.1
 
     def train(
         self,
@@ -22,23 +23,7 @@ class LinearClassifier(object):
         batch_size=200,
         verbose=False,
     ):
-        """
-        Train this linear classifier using stochastic gradient descent.
-
-        Inputs:
-        - X: A numpy array of shape (N, D) containing training data; there are N
-          training samples each of dimension D.
-        - y: A numpy array of shape (N,) containing training labels; y[i] = c
-          means that X[i] has label 0 <= c < C for C classes.
-        - learning_rate: (float) learning rate for optimization.
-        - reg: (float) regularization strength.
-        - num_iters: (integer) number of steps to take when optimizing
-        - batch_size: (integer) number of training examples to use at each step.
-        - verbose: (boolean) If true, print progress during optimization.
-
-        Outputs:
-        A list containing the value of the loss function at each training iteration.
-        """
+      
         num_train, dim = X.shape
         num_classes = (
             np.max(y) + 1
@@ -53,21 +38,10 @@ class LinearClassifier(object):
             X_batch = None
             y_batch = None
 
-            #########################################################################
-            # TODO:                                                                 #
-            # Sample batch_size elements from the training data and their           #
-            # corresponding labels to use in this round of gradient descent.        #
-            # Store the data in X_batch and their corresponding labels in           #
-            # y_batch; after sampling X_batch should have shape (batch_size, dim)   #
-            # and y_batch should have shape (batch_size,)                           #
-            #                                                                       #
-            # Hint: Use np.random.choice to generate indices. Sampling with         #
-            # replacement is faster than sampling without replacement.              #
-            #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-            pass
-
+            mask=np.random.choice(X.shape[0],batch_size)
+            X_batch=X[mask]
+            y_batch=y[mask]
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             # evaluate loss and gradient
@@ -75,44 +49,22 @@ class LinearClassifier(object):
             loss_history.append(loss)
 
             # perform parameter update
-            #########################################################################
-            # TODO:                                                                 #
-            # Update the weights using the gradient and the learning rate.          #
-            #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-            pass
-
+            self.W-=learning_rate*grad
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            if verbose and it % 100 == 0:
-                print("iteration %d / %d: loss %f" % (it, num_iters, loss))
+            # if verbose and it % 100 == 0:
+            #     print("iteration %d / %d: loss %f" % (it, num_iters, loss))
 
         return loss_history
 
     def predict(self, X):
-        """
-        Use the trained weights of this linear classifier to predict labels for
-        data points.
 
-        Inputs:
-        - X: A numpy array of shape (N, D) containing training data; there are N
-          training samples each of dimension D.
-
-        Returns:
-        - y_pred: Predicted labels for the data in X. y_pred is a 1-dimensional
-          array of length N, and each element is an integer giving the predicted
-          class.
-        """
         y_pred = np.zeros(X.shape[0])
-        ###########################################################################
-        # TODO:                                                                   #
-        # Implement this method. Store the predicted labels in y_pred.            #
-        ###########################################################################
+        
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        pass
-
+        score=np.dot(X,self.W)
+        y_pred=np.argmax(score,axis=1)
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return y_pred
 

@@ -2,6 +2,8 @@ from builtins import range
 from builtins import object
 import numpy as np
 from past.builtins import xrange
+import matplotlib.pyplot as plt
+
 
 
 class KNearestNeighbor(object):
@@ -76,9 +78,13 @@ class KNearestNeighbor(object):
                 # not use a loop over dimension, nor use np.linalg.norm().          #
                 #####################################################################
                 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+                
+
+                # np.sum, np.sqrt를 필히 사용해야함.
+                # 그냥 sum. ()**0.5를 하니 존나게 느림.
+                dists[i,j]=np.sqrt(np.sum(np.square(X[i]-self.X_train[j])))
 
                 pass
-
                 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
 
@@ -100,7 +106,11 @@ class KNearestNeighbor(object):
             # Do not use np.linalg.norm().                                        #
             #######################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+            # print(self.X_train.shape)
+            #broadcast를 사용하여 쉽게 해석가능. 이해 안 되면 배열 형태 써보고 파악하자
+            # dists[i]=np.abs(np.sum(np.square(X[i]-self.X_train)))
+            dists[i]=np.sqrt(np.sum(np.square(X[i]-self.X_train),axis=1))
+            
             pass
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -129,11 +139,18 @@ class KNearestNeighbor(object):
         # HINT: Try to formulate the l2 distance using matrix multiplication    #
         #       and two broadcast sums.                                         #
         #########################################################################
-        # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+                
+        square_of_test=np.transpose([np.sum(np.square(X),axis=1)])
+        # square_of_test=np.sum(np.square(x_test),axis=1)
 
+        square_of_train=np.sum(np.square(self.X_train),axis=1)
+        mul=-2*np.dot(X,self.X_train.T)        
+        
+        dists=np.sqrt(mul+square_of_test+square_of_train)
+        
+        
         pass
 
-        # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
 
     def predict_labels(self, dists, k=1):
@@ -163,7 +180,12 @@ class KNearestNeighbor(object):
             # Hint: Look up the function numpy.argsort.                             #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+            s=np.argsort(dists[i])
+            # print(s)
+            # print(self.y_train[s])
+            # 이것도 히트.... 리스트 뒤에 [:k]하면 k개 많큼의 리스트를 짤라줌.
+            closest_y=self.y_train[s[:k]]
+            # print(closest_y)
             pass
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -175,7 +197,9 @@ class KNearestNeighbor(object):
             # label.                                                                #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+            
+            # 이것도 히트... 리스트중 가장 많이 중복되는것 찾기
+            y_pred[i]=np.argmax(np.bincount(closest_y))
             pass
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
