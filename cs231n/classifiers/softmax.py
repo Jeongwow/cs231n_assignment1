@@ -33,8 +33,24 @@ def softmax_loss_naive(W, X, y, reg):
     # regularization!                                                           #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-    pass
+    num_images=X.shape[0]
+    num_classes=W.shape[1]
+    for i in range(num_images):
+      score=np.dot(X[i],W)
+      correct_score=score[y[i]]
+      softmax=np.exp(correct_score)/np.sum(np.exp(score))
+      print(softmax.shape)
+      loss-=np.log(softmax)
+      # loss-=np.log(np.exp(correct_score))-np.log(np.sum(np.exp(score)))
+      # for j in range(num_classes):
+      #   dW[:,j]+=
+      # if 
+    
+    regularization=np.sum(np.square(W))
+    
+    loss+=regularization
+    loss/=num_images
+    
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
